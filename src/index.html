@@ -1,32 +1,308 @@
 <!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <link rel="stylesheet" href="styles.css" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>PakePlus App</title>
-        <script type="module" src="/main.js" defer></script>
-    </head>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>轮播图效果</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 900px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        h1 {
+            text-align: center;
+            color: white;
+            margin-bottom: 25px;
+            font-size: 2.5rem;
+            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+        }
+        
+        .description {
+            text-align: center;
+            color: #e0e0e0;
+            margin-bottom: 30px;
+            line-height: 1.6;
+            font-size: 1.1rem;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .carousel-container {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .wrapper {
+            position: relative;
+            width: 100%;
+            height: 400px;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+        }
+        
+        #pic {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            transition: transform 0.5s ease;
+        }
+        
+        .btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 50px;
+            height: 50px;
+            background: rgba(255, 255, 255, 0.3);
+            border: none;
+            border-radius: 50%;
+            font-size: 24px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(5px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+        
+        .btn:hover {
+            background: rgba(255, 255, 255, 0.5);
+            transform: translateY(-50%) scale(1.1);
+        }
+        
+        .btn:active {
+            transform: translateY(-50%) scale(0.95);
+        }
+        
+        .pre {
+            left: 20px;
+        }
+        
+        .next {
+            right: 20px;
+        }
+        
+        ul {
+            position: absolute;
+            right: 20px;
+            bottom: 20px;
+            width: 160px;
+            list-style: none;
+            display: flex;
+            justify-content: space-between;
+            padding: 8px;
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 30px;
+        }
+        
+        li {
+            width: 20px;
+            height: 20px;
+            background: #ccc;
+            border-radius: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        li:hover {
+            background: #aaa;
+            transform: scale(1.1);
+        }
+        
+        li.active {
+            background: #ff6b6b;
+            transform: scale(1.2);
+        }
+        
+        .features {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            margin-top: 30px;
+        }
+        
+        .feature {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 20px;
+            width: calc(33% - 20px);
+            min-width: 250px;
+            margin-bottom: 20px;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+        
+        .feature:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.15);
+        }
+        
+        .feature h3 {
+            color: #ffd166;
+            margin-bottom: 12px;
+            font-size: 1.4rem;
+        }
+        
+        .feature p {
+            color: #e0e0e0;
+            line-height: 1.5;
+        }
+        
+        .icon {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            color: #4ecdc4;
+        }
+        
+        @media (max-width: 768px) {
+            .features {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .feature {
+                width: 100%;
+                max-width: 400px;
+            }
+            
+            .wrapper {
+                height: 300px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>图片轮播展示</h1>
+        <p class="description">这是一个具有自动轮播、手动切换和指示点控制的轮播图组件。鼠标悬停可暂停自动播放，移开恢复。</p>
+        
+        <div class="carousel-container">
+            <div class="wrapper">
+                <img src="https://images.unsplash.com/photo-1682687220063-4742bd7fd538?auto=format&fit=crop&q=80" alt="轮播图" id="pic" name="pic"/>
+                <button class="btn pre" onclick="showPre()">❮</button>
+                <button class="btn next" onclick="showNext()">❯</button>
+                <ul>
+                    <li class="active"></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="features">
+            <div class="feature">
+                <div class="icon">🔄</div>
+                <h3>自动轮播</h3>
+                <p>默认每2秒自动切换图片，提供流畅的视觉体验</p>
+            </div>
+            <div class="feature">
+                <div class="icon">🖱️</div>
+                <h3>手动控制</h3>
+                <p>使用左右按钮或指示点手动切换图片，完全掌控浏览节奏</p>
+            </div>
+            <div class="feature">
+                <div class="icon">⏸️</div>
+                <h3>悬停暂停</h3>
+                <p>鼠标悬停时暂停自动轮播，移开恢复，提升交互体验</p>
+            </div>
+        </div>
+    </div>
 
-    <body>
-        <main class="container">
-            <h1>Welcome to PakePlus</h1>
-            <form class="row" id="greet-form">
-                <input id="inputValue" placeholder="Enter a something..." />
-            </form>
-            <div class="resultBox">
-                <span>result: </span>
-                <span id="result"></span>
-            </div>
-            <div class="invokeBox">
-                <button id="openUrl">open_url_browser</button>
-                <button id="openUrlNew">open_url_new</button>
-                <button id="runCommand">run_command</button>
-                <button id="downloadFile">download_file</button>
-                <button id="getExeDir">get_exe_dir</button>
-                <button id="getEnvVar">get_env_var</button>
-                <button id="findPort">find_port</button>
-            </div>
-        </main>
-    </body>
+    <script>
+        // 图片数组 - 使用Unsplash的随机图片API
+        var picsArr = [
+            "https://tse3-mm.cn.bing.net/th/id/OIP-C.v0TcgaJScjl0a-AlOANPpgHaE7?w=228&h=180&c=7&r=0&o=7&cb=12&pid=1.7&rm=3",
+            "https://tse2-mm.cn.bing.net/th/id/OIP-C.7zYxv5S049_ybprvv9-koAHaE7?w=288&h=192&c=7&r=0&o=7&cb=12&pid=1.7&rm=3",
+            "https://tse3-mm.cn.bing.net/th/id/OIP-C.GM7bzXffYNYHljcR9tNGUAHaFk?w=232&h=180&c=7&r=0&o=7&cb=12&pid=1.7&rm=3",
+            "https://tse2-mm.cn.bing.net/th/id/OIP-C.xA1OYhdNiKF_i0xcTeT48gHaE8?w=270&h=180&c=7&r=0&o=7&cb=12&pid=1.7&rm=3",
+            "https://tse2-mm.cn.bing.net/th/id/OIP-C.wJ3IoB8CjEAYzYekrDkmHAHaE7?w=248&h=180&c=7&r=0&o=7&cb=12&pid=1.7&rm=3"
+        ];
+        
+        var index = 0;
+        var len = picsArr.length;
+        var obj = document.getElementById("pic");
+        var wrapper = document.querySelector(".wrapper");
+        var lis = document.querySelectorAll("li");
+        
+        // 下一张
+        function showNext() {
+            index = (index + 1) % len;
+            obj.src = picsArr[index];
+            updateDots();
+        }
+        
+        // 上一张
+        function showPre() {
+            index = (index - 1 + len) % len;
+            obj.src = picsArr[index];
+            updateDots();
+        }
+        
+        // 更新指示点
+        function updateDots() {
+            lis.forEach((dot, k) => {
+                dot.classList.toggle('active', k === index);
+            });
+        }
+        
+        // 给每个指示点添加点击事件
+        lis.forEach((dot, k) => {
+            dot.onclick = function() {
+                index = k;
+                obj.src = picsArr[index];
+                updateDots();
+            };
+        });
+        
+        // 启动定时器
+        var timer = setInterval(showNext, 2000);
+        
+        // 鼠标悬停暂停轮播并显示按钮
+        wrapper.onmouseover = function() {
+            clearInterval(timer);
+            document.querySelector(".next").style.display = "block";
+            document.querySelector(".pre").style.display = "block";
+        };
+        
+        // 鼠标移出恢复轮播并隐藏按钮
+        wrapper.onmouseout = function() {
+            timer = setInterval(showNext, 2000);
+            document.querySelector(".next").style.display = "block";
+            document.querySelector(".pre").style.display = "block";
+        };
+    </script>
+</body>
 </html>
